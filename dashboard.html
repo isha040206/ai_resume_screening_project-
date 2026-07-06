@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block title %}HR Dashboard — ResumeAI{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2 class="page-heading">HR Dashboard</h2>
+  <p class="page-sub">Real-time overview of all recruitment activities</p>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-4 mb-4">
+  <div class="col-xl-3 col-md-6">
+    <div class="stat-card stat-blue">
+      <div class="stat-icon"><i class="fas fa-users"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ total_candidates }}</div>
+        <div class="stat-label">Total Candidates</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="stat-card stat-indigo">
+      <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ total_jobs }}</div>
+        <div class="stat-label">Active Jobs</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="stat-card stat-teal">
+      <div class="stat-icon"><i class="fas fa-paper-plane"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ total_applications }}</div>
+        <div class="stat-label">Total Applications</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="stat-card stat-green">
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ selected }}</div>
+        <div class="stat-label">Selected</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-xl-3 col-md-6">
+    <div class="stat-card stat-red">
+      <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ rejected }}</div>
+        <div class="stat-label">Rejected</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="stat-card stat-orange">
+      <div class="stat-icon"><i class="fas fa-star"></i></div>
+      <div class="stat-body">
+        <div class="stat-value">{{ shortlisted }}</div>
+        <div class="stat-label">Shortlisted</div>
+      </div>
+    </div>
+  </div>
+  {% if top_ranking %}
+  <div class="col-xl-6 col-md-12">
+    <div class="stat-card stat-purple top-card">
+      <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+      <div class="stat-body">
+        <div class="stat-label mb-1">Top Ranked Candidate</div>
+        <div class="stat-value">{{ top_ranking.candidate.full_name }}</div>
+        <div class="text-muted small">{{ top_ranking.job.job_title }} — <strong>{{ top_ranking.score|floatformat:1 }}% match</strong></div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Charts Row -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-5">
+    <div class="card-panel">
+      <div class="card-panel-header">
+        <h5><i class="fas fa-chart-pie me-2 text-primary"></i>Application Status</h5>
+      </div>
+      <div class="chart-wrap" style="height:240px;">
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card-panel">
+      <div class="card-panel-header">
+        <h5><i class="fas fa-chart-bar me-2 text-primary"></i>Applications per Job</h5>
+      </div>
+      <div class="chart-wrap" style="height:240px;">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card-panel">
+      <div class="card-panel-header">
+        <h5><i class="fas fa-chart-line me-2 text-primary"></i>Top Candidate Scores</h5>
+      </div>
+      <div class="chart-wrap" style="height:220px;">
+        <canvas id="scoreChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card-panel">
+      <div class="card-panel-header">
+        <h5><i class="fas fa-clock me-2 text-primary"></i>Recent Applications</h5>
+      </div>
+      <ul class="activity-list">
+        {% for app in recent_applications %}
+        <li class="activity-item">
+          <div class="activity-avatar">{{ app.candidate.full_name|first|upper }}</div>
+          <div class="activity-body">
+            <div class="activity-name">{{ app.candidate.full_name }}</div>
+            <div class="activity-meta">{{ app.job.job_title }}</div>
+          </div>
+          <span class="badge status-badge-{{ app.status }}">{{ app.get_status_display }}</span>
+        </li>
+        {% empty %}
+        <li class="text-muted small p-3">No applications yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const chartLabels = {{ chart_labels|safe }};
+const chartValues = {{ chart_values|safe }};
+const scoreLabels = {{ score_labels|safe }};
+const scoreValues = {{ score_values|safe }};
+const pieData = {{ pie_data|safe }};
+
+// Pie Chart
+new Chart(document.getElementById('pieChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Pending / In Review', 'Selected', 'Rejected'],
+    datasets: [{
+      data: pieData,
+      backgroundColor: ['#6366f1','#22c55e','#ef4444'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+});
+
+// Bar Chart
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: chartLabels,
+    datasets: [{
+      label: 'Applications',
+      data: chartValues,
+      backgroundColor: '#6366f1',
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+  }
+});
+
+// Score Chart
+new Chart(document.getElementById('scoreChart'), {
+  type: 'bar',
+  data: {
+    labels: scoreLabels,
+    datasets: [{
+      label: 'Match Score (%)',
+      data: scoreValues,
+      backgroundColor: scoreValues.map(v => v >= 70 ? '#22c55e' : v >= 40 ? '#f59e0b' : '#ef4444'),
+      borderRadius: 5
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: { x: { beginAtZero: true, max: 100 } }
+  }
+});
+</script>
+{% endblock %}

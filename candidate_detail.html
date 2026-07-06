@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+{% load extra_filters %}
+{% block title %}{{ profile.full_name }} — ResumeAI{% endblock %}
+{% block page_title %}Candidate Profile{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+  <div>
+    <h2 class="page-heading">{{ profile.full_name }}</h2>
+    <p class="page-sub">Detailed profile and AI resume analysis</p>
+  </div>
+  <a href="{% url 'hr_candidate_list' %}" class="btn btn-outline-secondary">
+    <i class="fas fa-arrow-left me-2"></i>Back
+  </a>
+</div>
+
+<div class="row g-4 mb-4">
+
+  <!-- Profile Card -->
+  <div class="col-lg-4">
+    <div class="card-panel text-center">
+      <div class="profile-avatar-lg">
+        {{ profile.full_name|first|upper }}
+      </div>
+
+      <h4 class="mt-3 mb-1">{{ profile.full_name }}</h4>
+
+      <span class="badge status-badge-{{ profile.status }} mb-3">
+        {{ profile.get_status_display }}
+      </span>
+
+      <div class="profile-info-list">
+        <div class="profile-info-item">
+          <i class="fas fa-envelope"></i>
+          {{ profile.email }}
+        </div>
+
+        {% if profile.phone %}
+        <div class="profile-info-item">
+          <i class="fas fa-phone"></i>
+          {{ profile.phone }}
+        </div>
+        {% endif %}
+
+        {% if profile.education %}
+        <div class="profile-info-item">
+          <i class="fas fa-graduation-cap"></i>
+          {{ profile.education|truncatechars:60 }}
+        </div>
+        {% endif %}
+
+        {% if profile.experience %}
+        <div class="profile-info-item">
+          <i class="fas fa-briefcase"></i>
+          {{ profile.experience|truncatechars:60 }}
+        </div>
+        {% endif %}
+      </div>
+
+      {% if profile.resume_file %}
+      <a href="{{ profile.resume_file.url }}"
+         target="_blank"
+         class="btn btn-outline-primary w-100 mt-3">
+        <i class="fas fa-file-pdf me-2"></i>
+        View Resume PDF
+      </a>
+      {% else %}
+      <div class="text-muted small mt-3">
+        No resume uploaded
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Right Side -->
+  <div class="col-lg-8">
+
+    <!-- Applications -->
+    <div class="card-panel mb-4">
+
+      <div class="card-panel-header">
+        <h5>
+          <i class="fas fa-paper-plane me-2 text-primary"></i>
+          Applications & Status
+        </h5>
+      </div>
+
+      {% for app in applications %}
+
+      <div class="app-row">
+
+        <div class="app-info">
+          <strong>{{ app.job.job_title }}</strong>
+
+          <small class="text-muted d-block">
+            Applied {{ app.applied_date|date:"d M Y" }}
+          </small>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+
+          <span class="badge status-badge-{{ app.status }}">
+            {{ app.get_status_display }}
+          </span>
+
+          <form method="post"
+                action="{% url 'update_status' app.id 'under_review' %}">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-warning btn-sm">
+              <i class="fas fa-search me-1"></i>
+              Review
+            </button>
+          </form>
+
+          <form method="post"
+                action="{% url 'update_status' app.id 'shortlisted' %}">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-info btn-sm text-white">
+              <i class="fas fa-star me-1"></i>
+              Shortlist
+            </button>
+          </form>
+
+          <form method="post"
+                action="{% url 'update_status' app.id 'selected' %}">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-success btn-sm">
+              <i class="fas fa-check me-1"></i>
+              Select
+            </button>
+          </form>
+
+          <form method="post"
+                action="{% url 'update_status' app.id 'rejected' %}">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-danger btn-sm">
+              <i class="fas fa-times me-1"></i>
+              Reject
+            </button>
+          </form>
+
+        </div>
+
+      </div>
+
+      {% empty %}
+
+      <p class="text-muted small p-3">
+        No applications yet.
+      </p>
+
+      {% endfor %}
+
+    </div>
+
+    <!-- AI Analysis -->
+    {% for item in analysis_data %}
+
+    <div class="card-panel mb-4 border-left-primary">
+
+      <div class="card-panel-header">
+
+        <h5>
+          <i class="fas fa-robot me-2 text-primary"></i>
+          AI Analysis — {{ item.analysis.job.job_title }}
+        </h5>
+
+        <span class="score-pill
+          {% if item.analysis.score >= 70 %}
+             score-high
+          {% elif item.analysis.score >= 40 %}
+             score-mid
+          {% else %}
+             score-low
+          {% endif %}
+          ms-2">
+
+          {{ item.analysis.score|floatformat:1 }}%
+
+        </span>
+
+      </div>
+
+      <div class="score-bar-wrap mb-3">
+        <div class="score-bar-track">
+          <div class="score-bar-fill
+          {% if item.analysis.score >= 70 %}
+              fill-high
+          {% elif item.analysis.score >= 40 %}
+              fill-mid
+          {% else %}
+              fill-low
+          {% endif %}"
+          style="width:{{ item.analysis.score|floatformat:0 }}%">
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+
+        <div class="col-md-4">
+
+          <label class="info-label">
+            Extracted Skills
+          </label>
+
+          <div class="skills-wrap">
+
+            {% for s in item.extracted %}
+              <span class="skill-tag">{{ s }}</span>
+            {% empty %}
+              <span class="text-muted small">—</span>
+            {% endfor %}
+
+          </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+          <label class="info-label text-success">
+            ✓ Matched Skills
+          </label>
+
+          <div class="skills-wrap">
+
+            {% for s in item.matched %}
+              <span class="skill-tag skill-matched">{{ s }}</span>
+            {% empty %}
+              <span class="text-muted small">None</span>
+            {% endfor %}
+
+          </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+          <label class="info-label text-danger">
+            ✗ Missing Skills
+          </label>
+
+          <div class="skills-wrap">
+
+            {% for s in item.missing %}
+              <span class="skill-tag skill-missing">{{ s }}</span>
+            {% empty %}
+              <span class="text-success small">
+                All matched!
+              </span>
+            {% endfor %}
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    {% endfor %}
+
+  </div>
+
+</div>
+
+{% endblock %}

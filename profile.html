@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}My Profile — ResumeAI{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+{% block content %}
+<div class="page-header"><h2 class="page-heading">My Profile</h2><p class="page-sub">Update your details and upload your resume</p></div>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card-panel mb-4">
+      <div class="card-panel-header"><h5><i class="fas fa-user me-2 text-primary"></i>Personal Information</h5></div>
+      <form method="post">
+        {% csrf_token %}
+        {% for field in profile_form %}
+        <div class="mb-3"><label class="form-label fw-semibold">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="text-danger small mt-1">{{ field.errors|join:", " }}</div>{% endif %}</div>
+        {% endfor %}
+        <button type="submit" name="save_profile" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Profile</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card-panel">
+      <div class="card-panel-header"><h5><i class="fas fa-file-pdf me-2 text-danger"></i>Resume Upload</h5></div>
+      {% if profile.resume_file %}
+      <div class="resume-preview mb-3">
+        <i class="fas fa-file-pdf text-danger fa-2x"></i>
+        <div class="ms-3"><strong>Resume uploaded</strong><div><a href="{{ profile.resume_file.url }}" target="_blank" class="text-primary small">View PDF <i class="fas fa-external-link-alt"></i></a></div></div>
+      </div>
+      {% endif %}
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Upload PDF Resume</label>
+          {{ resume_form.resume_file }}
+          <div class="form-text">Max 5 MB. PDF only.</div>
+          {% if resume_form.resume_file.errors %}<div class="text-danger small mt-1">{{ resume_form.resume_file.errors|join:", " }}</div>{% endif %}
+        </div>
+        <button type="submit" name="upload_resume" class="btn btn-danger"><i class="fas fa-upload me-2"></i>Upload Resume</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Reports — ResumeAI{% endblock %}
+{% block page_title %}Reports{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2 class="page-heading">Reports & Exports</h2>
+  <p class="page-sub">Generate and download recruitment reports</p>
+</div>
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="report-card">
+      <div class="report-icon bg-primary-subtle text-primary"><i class="fas fa-users"></i></div>
+      <h5>Candidate Report</h5>
+      <p class="text-muted small">All candidates with scores and statuses as PDF.</p>
+      <a href="{% url 'export_pdf' %}" class="btn btn-primary w-100"><i class="fas fa-download me-2"></i>Download PDF</a>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="report-card">
+      <div class="report-icon bg-success-subtle text-success"><i class="fas fa-file-excel"></i></div>
+      <h5>Excel Export</h5>
+      <p class="text-muted small">Export all candidate data to Excel spreadsheet.</p>
+      <a href="{% url 'export_excel' %}" class="btn btn-success w-100"><i class="fas fa-download me-2"></i>Download Excel</a>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="report-card">
+      <div class="report-icon bg-warning-subtle text-warning"><i class="fas fa-trophy"></i></div>
+      <h5>Rankings Report</h5>
+      <p class="text-muted small">Export ranked candidates PDF for a specific job.</p>
+      <form method="get" action="#" id="rankReportForm">
+        <select class="form-select mb-2" id="rankJobSelect">
+          <option value="">Select Job...</option>
+          {% for job in jobs %}
+          <option value="{{ job.id }}">{{ job.job_title }}</option>
+          {% endfor %}
+        </select>
+        <button type="button" class="btn btn-warning w-100" onclick="downloadRankReport()">
+          <i class="fas fa-download me-2"></i>Download PDF
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function downloadRankReport() {
+  const jobId = document.getElementById('rankJobSelect').value;
+  if (!jobId) { alert('Please select a job first.'); return; }
+  window.location.href = `/hr/reports/rankings/${jobId}/pdf/`;
+}
+</script>
+{% endblock %}

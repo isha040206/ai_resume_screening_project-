@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}AI Resume Screening{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="/static/css/main.css" rel="stylesheet">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+{% if user.is_authenticated %}
+<div class="app-wrapper">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-icon"><i class="fas fa-brain"></i></div>
+        <div class="brand-text">
+          <span class="brand-name">ResumeAI</span>
+          <span class="brand-sub">Screening System</span>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ user.username|first|upper }}</div>
+      <div class="user-info">
+        <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+        <div class="user-role">{% if user.is_staff %}HR Admin{% else %}Candidate{% endif %}</div>
+      </div>
+    </div>
+    <ul class="sidebar-nav">
+      {% if user.is_staff %}
+        <li class="nav-label">Main Menu</li>
+        <li><a href="{% url 'hr_dashboard' %}" class="{% if request.resolver_match.url_name == 'hr_dashboard' %}active{% endif %}"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+        <li><a href="{% url 'hr_job_list' %}" class="{% if 'job' in request.resolver_match.url_name %}active{% endif %}"><i class="fas fa-briefcase"></i> Job Posts</a></li>
+        <li><a href="{% url 'hr_candidate_list' %}" class="{% if 'candidate' in request.resolver_match.url_name %}active{% endif %}"><i class="fas fa-users"></i> Candidates</a></li>
+        <li><a href="{% url 'hr_rankings' %}" class="{% if 'ranking' in request.resolver_match.url_name %}active{% endif %}"><i class="fas fa-trophy"></i> Rankings</a></li>
+        <li class="nav-label">Reports</li>
+        <li><a href="{% url 'hr_reports' %}" class="{% if 'report' in request.resolver_match.url_name %}active{% endif %}"><i class="fas fa-file-alt"></i> Reports</a></li>
+      {% else %}
+        <li class="nav-label">My Account</li>
+        <li><a href="{% url 'candidate_dashboard' %}" class="{% if request.resolver_match.url_name == 'candidate_dashboard' %}active{% endif %}"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="{% url 'candidate_profile' %}" class="{% if request.resolver_match.url_name == 'candidate_profile' %}active{% endif %}"><i class="fas fa-user-circle"></i> My Profile</a></li>
+        <li><a href="{% url 'candidate_job_list' %}" class="{% if request.resolver_match.url_name == 'candidate_job_list' %}active{% endif %}"><i class="fas fa-search"></i> Browse Jobs</a></li>
+        <li><a href="{% url 'candidate_applications' %}" class="{% if request.resolver_match.url_name == 'candidate_applications' %}active{% endif %}"><i class="fas fa-paper-plane"></i> My Applications</a></li>
+      {% endif %}
+    </ul>
+    <div class="sidebar-footer">
+      <a href="{% url 'logout' %}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <header class="topbar">
+      <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+      <div class="topbar-title">{% block page_title %}{% endblock %}</div>
+      <div class="topbar-right">
+        <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-2">{% if user.is_staff %}HR Admin{% else %}Candidate{% endif %}</span>
+      </div>
+    </header>
+    <div class="alerts-container">
+      {% for msg in messages %}
+        <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}{{ msg.tags }}{% endif %} alert-dismissible fade show" role="alert">
+          <i class="fas fa-{% if msg.tags == 'success' %}check-circle{% elif msg.tags == 'error' or msg.tags == 'danger' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+          {{ msg }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+    <main class="page-content">{% block content %}{% endblock %}</main>
+  </div>
+</div>
+{% else %}
+  {% block auth_content %}{% endblock %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="/static/js/main.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

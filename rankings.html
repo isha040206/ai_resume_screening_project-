@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Rankings — ResumeAI{% endblock %}
+{% block page_title %}Candidate Rankings{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2 class="page-heading">AI Candidate Rankings</h2>
+  <p class="page-sub">Candidates ranked by AI match score for each job</p>
+</div>
+
+<div class="card-panel mb-4">
+  <form method="get" class="row g-3 align-items-end">
+    <div class="col-md-6">
+      <label class="form-label fw-semibold">Select Job Position</label>
+      <select name="job" class="form-select" onchange="this.form.submit()">
+        <option value="">— Choose a Job —</option>
+        {% for job in jobs %}
+        <option value="{{ job.id }}" {% if selected_job and selected_job.id == job.id %}selected{% endif %}>{{ job.job_title }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% if selected_job %}
+    <div class="col-md-3">
+      <a href="{% url 'recompute_rankings' selected_job.id %}" class="btn btn-outline-primary w-100">
+        <i class="fas fa-sync me-2"></i>Recompute Rankings
+      </a>
+    </div>
+    <div class="col-md-3">
+      <a href="{% url 'export_rankings_pdf' selected_job.id %}" class="btn btn-outline-danger w-100">
+        <i class="fas fa-file-pdf me-2"></i>Export PDF
+      </a>
+    </div>
+    {% endif %}
+  </form>
+</div>
+
+{% if selected_job %}
+<div class="card-panel">
+  <div class="card-panel-header">
+    <h5><i class="fas fa-trophy me-2 text-warning"></i>Rankings for: {{ selected_job.job_title }}</h5>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr><th>Rank</th><th>Candidate</th><th>Match Score</th><th>Progress</th><th>Recommended</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in rankings %}
+      <tr class="{% if r.rank == 1 %}rank-gold{% elif r.rank == 2 %}rank-silver{% elif r.rank == 3 %}rank-bronze{% endif %}">
+        <td>
+          <div class="rank-badge rank-{{ r.rank }}">
+            {% if r.rank == 1 %}🥇{% elif r.rank == 2 %}🥈{% elif r.rank == 3 %}🥉{% else %}#{{ r.rank }}{% endif %}
+          </div>
+        </td>
+        <td>
+          <div class="d-flex align-items-center gap-2">
+            <div class="table-avatar">{{ r.candidate.full_name|first|upper }}</div>
+            <div>
+              <strong>{{ r.candidate.full_name }}</strong><br>
+              <small class="text-muted">{{ r.candidate.email }}</small>
+            </div>
+          </div>
+        </td>
+        <td>
+          <span class="score-pill {% if r.score >= 70 %}score-high{% elif r.score >= 40 %}score-mid{% else %}score-low{% endif %}">
+            {{ r.score|floatformat:1 }}%
+          </span>
+        </td>
+        <td style="min-width:140px;">
+          <div class="score-bar-track">
+            <div class="score-bar-fill {% if r.score >= 70 %}fill-high{% elif r.score >= 40 %}fill-mid{% else %}fill-low{% endif %}"
+                 style="width:{{ r.score|floatformat:0 }}%"></div>
+          </div>
+        </td>
+        <td>
+          {% if r.is_recommended %}
+            <span class="badge bg-warning-subtle text-warning fw-semibold"><i class="fas fa-star me-1"></i>Recommended</span>
+          {% else %}&mdash;{% endif %}
+        </td>
+        <td><a href="{% url 'hr_candidate_detail' r.candidate.id %}" class="btn btn-sm btn-primary"><i class="fas fa-eye me-1"></i>Profile</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center text-muted py-4">No rankings yet. Candidates must apply first, then click Recompute Rankings.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <i class="fas fa-trophy"></i>
+  <h4>Select a Job Position</h4>
+  <p>Choose a job from the dropdown above to view its candidate rankings.</p>
+</div>
+{% endif %}
+{% endblock %}

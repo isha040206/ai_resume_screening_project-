@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Login — ResumeAI{% endblock %}
+{% block auth_content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="auth-brand-icon"><i class="fas fa-brain"></i></div>
+      <h1>ResumeAI</h1>
+      <p>AI-Powered Resume Screening System</p>
+    </div>
+    <div class="auth-body">
+      <h2>Sign In</h2>
+      <p class="auth-subtitle">Enter your credentials to access the system</p>
+      {% for msg in messages %}
+        <div class="alert alert-danger py-2"><i class="fas fa-exclamation-circle me-2"></i>{{ msg }}</div>
+      {% endfor %}
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Username</label>
+          {{ form.username }}
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Password</label>
+          {{ form.password }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100 btn-lg">
+          <i class="fas fa-sign-in-alt me-2"></i>Sign In
+        </button>
+      </form>
+      <div class="auth-footer">
+        New candidate? <a href="{% url 'register' %}">Create an account</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

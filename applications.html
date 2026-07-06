@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}My Applications — ResumeAI{% endblock %}
+{% block page_title %}My Applications{% endblock %}
+{% block content %}
+<div class="page-header"><h2 class="page-heading">My Applications</h2><p class="page-sub">Your AI match scores and application status</p></div>
+{% for item in app_data %}
+<div class="card-panel mb-4">
+  <div class="card-panel-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0"><i class="fas fa-briefcase me-2 text-primary"></i>{{ item.application.job.job_title }}</h5>
+    <span class="badge status-badge-{{ item.application.status }}">{{ item.application.get_status_display }}</span>
+  </div>
+  <div class="row g-3 mt-1">
+    <div class="col-md-4">
+      <div class="score-display">
+        <div class="score-circle {% if item.score >= 70 %}score-high{% elif item.score >= 40 %}score-mid{% else %}score-low{% endif %}">
+          {{ item.score|floatformat:1 }}%
+        </div>
+        <div class="score-label">AI Match Score</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label class="info-label text-success">✓ Matched Skills ({{ item.matched_skills|length }})</label>
+      <div class="skills-wrap">
+        {% for s in item.matched_skills %}<span class="skill-tag skill-matched">{{ s }}</span>{% empty %}<span class="text-muted small">None matched</span>{% endfor %}
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label class="info-label text-danger">✗ Missing Skills ({{ item.missing_skills|length }})</label>
+      <div class="skills-wrap">
+        {% for s in item.missing_skills %}<span class="skill-tag skill-missing">{{ s }}</span>{% empty %}<span class="text-success small">All skills matched!</span>{% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="score-bar-wrap mt-3">
+    <div class="score-bar-track">
+      <div class="score-bar-fill {% if item.score >= 70 %}fill-high{% elif item.score >= 40 %}fill-mid{% else %}fill-low{% endif %}" style="width:{{ item.score|floatformat:0 }}%"></div>
+    </div>
+    <small class="text-muted">Applied {{ item.application.applied_date|date:"d M Y" }}</small>
+  </div>
+</div>
+{% empty %}
+<div class="empty-state"><i class="fas fa-paper-plane"></i><h4>No Applications Yet</h4><p><a href="{% url 'candidate_job_list' %}">Browse available jobs</a> and apply to get started.</p></div>
+{% endfor %}
+{% endblock %}

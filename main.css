@@ -1,0 +1,274 @@
+/* ============================================
+   ResumeAI — Main Stylesheet
+   Professional Blue/Indigo Design System
+   ============================================ */
+
+:root {
+  --primary:    #4f46e5;
+  --primary-dk: #3730a3;
+  --primary-lt: #e0e7ff;
+  --sidebar-bg: #1e1b4b;
+  --sidebar-w:  260px;
+  --topbar-h:   64px;
+  --radius:     12px;
+  --shadow:     0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,.12);
+  --bg:         #f5f6fa;
+  --surface:    #ffffff;
+  --border:     #e8eaf0;
+  --text:       #1a1a2e;
+  --muted:      #64748b;
+  --green:      #16a34a;
+  --red:        #dc2626;
+  --orange:     #ea580c;
+  --teal:       #0891b2;
+  --purple:     #7c3aed;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+
+/* ── LAYOUT ── */
+.app-wrapper   { display: flex; min-height: 100vh; }
+.main-content  { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-height: 100vh; transition: margin .3s; }
+.page-content  { flex: 1; padding: 24px 28px 40px; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  position: fixed; top: 0; left: 0; height: 100vh;
+  display: flex; flex-direction: column;
+  z-index: 1000; transition: transform .3s;
+  overflow-y: auto;
+}
+.sidebar-header { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.brand          { display: flex; align-items: center; gap: 12px; }
+.brand-icon     { width:40px; height:40px; background: var(--primary); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; }
+.brand-name     { display:block; font-size:17px; font-weight:700; color:#fff; line-height:1.2; }
+.brand-sub      { display:block; font-size:11px; color:rgba(255,255,255,.4); }
+
+.sidebar-user   { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,.08); display:flex; align-items:center; gap:12px; }
+.user-avatar    { width:36px; height:36px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; flex-shrink:0; }
+.user-name      { color:#fff; font-size:13px; font-weight:600; }
+.user-role      { color:rgba(255,255,255,.4); font-size:11px; }
+
+.sidebar-nav    { list-style:none; padding: 12px 12px 0; flex: 1; }
+.sidebar-nav li.nav-label { color: rgba(255,255,255,.3); font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding: 16px 8px 4px; }
+.sidebar-nav li a {
+  display:flex; align-items:center; gap:10px;
+  color: rgba(255,255,255,.65); text-decoration:none;
+  padding: 10px 12px; border-radius:8px; font-size:13.5px; font-weight:500;
+  transition: all .2s;
+}
+.sidebar-nav li a:hover, .sidebar-nav li a.active {
+  background: rgba(79,70,229,.35); color: #fff;
+}
+.sidebar-nav li a i { width:18px; text-align:center; font-size:14px; }
+
+.sidebar-footer  { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,.08); }
+.logout-btn      { display:flex; align-items:center; gap:10px; color:rgba(255,255,255,.5); text-decoration:none; font-size:13px; padding:8px 0; transition:color .2s; }
+.logout-btn:hover{ color:#ef4444; }
+
+/* ── TOPBAR ── */
+.topbar {
+  height: var(--topbar-h); background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display:flex; align-items:center; padding: 0 24px; gap:16px;
+  position: sticky; top:0; z-index:100;
+  box-shadow: 0 1px 0 var(--border);
+}
+.sidebar-toggle { background:none; border:none; cursor:pointer; padding:8px; color:var(--muted); border-radius:8px; font-size:18px; }
+.sidebar-toggle:hover { background:var(--bg); }
+.topbar-title   { font-size:15px; font-weight:600; color:var(--text); flex:1; }
+.alerts-container { padding: 12px 28px 0; }
+.alerts-container .alert { border-radius: var(--radius); font-size:13.5px; }
+
+/* ── PAGE HEADER ── */
+.page-header     { margin-bottom:24px; }
+.page-heading    { font-size:22px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.page-sub        { color:var(--muted); font-size:13.5px; }
+
+/* ── STAT CARDS ── */
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  display:flex; align-items:center; gap:16px;
+  box-shadow: var(--shadow);
+  border-left: 4px solid transparent;
+  transition: transform .2s, box-shadow .2s;
+}
+.stat-card:hover { transform:translateY(-2px); box-shadow: var(--shadow-lg); }
+.stat-icon  { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.stat-value { font-size:28px; font-weight:700; line-height:1; }
+.stat-label { font-size:12px; color:var(--muted); font-weight:500; margin-top:4px; }
+
+.stat-blue   { border-color: #4f46e5; } .stat-blue .stat-icon   { background:#e0e7ff; color:#4f46e5; }
+.stat-indigo { border-color: #6366f1; } .stat-indigo .stat-icon { background:#e0e7ff; color:#6366f1; }
+.stat-teal   { border-color: #0891b2; } .stat-teal .stat-icon   { background:#cffafe; color:#0891b2; }
+.stat-green  { border-color: #16a34a; } .stat-green .stat-icon  { background:#dcfce7; color:#16a34a; }
+.stat-red    { border-color: #dc2626; } .stat-red .stat-icon    { background:#fee2e2; color:#dc2626; }
+.stat-orange { border-color: #ea580c; } .stat-orange .stat-icon { background:#ffedd5; color:#ea580c; }
+.stat-purple { border-color: #7c3aed; } .stat-purple .stat-icon { background:#ede9fe; color:#7c3aed; }
+.top-card    { flex-direction: row; }
+
+/* ── CARD PANEL ── */
+.card-panel { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow:hidden; }
+/* Cards that contain a Bootstrap dropdown (e.g. the HR "Change Status" menu on the
+   Candidate Detail page) must NOT clip their overflow, otherwise the dropdown menu
+   gets cut off / hidden and clicks on "Selected"/"Rejected" never reach the button. */
+.card-panel.dropdown-safe { overflow: visible; }
+.dropdown-menu { z-index: 2000; }
+.dropdown-menu form { margin: 0; }
+.dropdown-menu form > .dropdown-item { width: 100%; text-align: left; background: none; border: 0; }
+.card-panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display:flex; align-items:center; }
+.card-panel-header h5 { font-size:14px; font-weight:600; color:var(--text); margin:0; }
+.card-panel > *:not(.card-panel-header) { padding: 0 20px 20px; }
+.card-panel > .card-panel-header + * { padding-top: 16px; }
+.chart-wrap { padding: 16px 20px 20px; }
+
+/* ── DATA TABLES ── */
+.data-table { width:100%; border-collapse:collapse; }
+.data-table thead th {
+  background: #f8f9fc; color:var(--muted); font-size:11px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.06em;
+  padding:12px 16px; border-bottom:2px solid var(--border); white-space:nowrap;
+}
+.data-table tbody tr { border-bottom:1px solid var(--border); transition:background .15s; }
+.data-table tbody tr:hover { background:#f8f9fc; }
+.data-table tbody td { padding:13px 16px; font-size:13.5px; vertical-align:middle; }
+.data-table tbody tr:last-child { border-bottom:none; }
+
+.rank-gold   { background: #fffbeb !important; }
+.rank-silver { background: #f8fafc !important; }
+.rank-bronze { background: #fff7ed !important; }
+.rank-badge  { font-size:18px; font-weight:800; min-width:36px; text-align:center; }
+
+/* ── BADGES / STATUS ── */
+.status-badge-applied      { background:#dbeafe; color:#1d4ed8; border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; }
+.status-badge-under_review { background:#fef3c7; color:#b45309; border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; }
+.status-badge-shortlisted  { background:#ede9fe; color:#6d28d9; border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; }
+.status-badge-selected     { background:#dcfce7; color:#15803d; border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; }
+.status-badge-rejected     { background:#fee2e2; color:#b91c1c; border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; }
+.status-badge-pending      { background:#f3f4f6; color:#6b7280; border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; }
+
+/* ── SCORE ELEMENTS ── */
+.score-pill { display:inline-block; padding:4px 12px; border-radius:20px; font-weight:700; font-size:13px; }
+.score-high { background:#dcfce7; color:#15803d; }
+.score-mid  { background:#fef3c7; color:#b45309; }
+.score-low  { background:#fee2e2; color:#b91c1c; }
+
+.score-bar-wrap   { }
+.score-bar-track  { height:8px; background:#f1f3f5; border-radius:4px; overflow:hidden; }
+.score-bar-fill   { height:100%; border-radius:4px; transition:width 1s ease; }
+.fill-high { background: linear-gradient(90deg, #16a34a, #4ade80); }
+.fill-mid  { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.fill-low  { background: linear-gradient(90deg, #dc2626, #f87171); }
+
+.score-circle {
+  width:80px; height:80px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; font-weight:800; margin:0 auto;
+  border: 4px solid currentColor;
+}
+.score-label { text-align:center; font-size:12px; color:var(--muted); margin-top:6px; }
+.score-display { text-align:center; padding:12px 0; }
+
+/* ── SKILLS ── */
+.skills-wrap { display:flex; flex-wrap:wrap; gap:5px; }
+.skill-tag { background:#f0f0f8; color:#4f46e5; border-radius:6px; padding:3px 9px; font-size:11.5px; font-weight:500; }
+.skill-matched { background:#dcfce7; color:#15803d; }
+.skill-missing { background:#fee2e2; color:#b91c1c; }
+
+/* ── ACTIVITY / APP ROWS ── */
+.activity-list { list-style:none; padding: 0 20px 8px; }
+.activity-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+.activity-item:last-child { border-bottom:none; }
+.activity-avatar { width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0; }
+.activity-body { flex:1; }
+.activity-name { font-size:13px; font-weight:600; }
+.activity-meta { font-size:11.5px; color:var(--muted); }
+
+.app-row { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-bottom:1px solid var(--border); }
+.app-row:last-child { border-bottom:none; }
+.app-info strong { font-size:13.5px; }
+
+.analysis-mini { padding:10px 20px; border-bottom:1px solid var(--border); }
+.analysis-mini:last-child { border-bottom:none; }
+.analysis-job   { font-size:13px; font-weight:600; margin-bottom:4px; }
+.analysis-score { font-size:11.5px; color:var(--muted); margin-top:4px; }
+
+/* ── AUTH PAGES ── */
+.auth-page { min-height:100vh; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%); display:flex; align-items:center; justify-content:center; padding:24px; }
+.auth-card { background:var(--surface); border-radius:20px; box-shadow: var(--shadow-lg); width:100%; max-width:440px; overflow:hidden; }
+.auth-brand { background: linear-gradient(135deg, var(--primary), var(--primary-dk)); padding:32px; text-align:center; color:#fff; }
+.auth-brand-icon { width:56px; height:56px; background:rgba(255,255,255,.2); border-radius:14px; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-size:26px; }
+.auth-brand h1 { font-size:22px; font-weight:800; margin-bottom:4px; }
+.auth-brand p  { font-size:13px; opacity:.75; margin:0; }
+.auth-body     { padding:32px; }
+.auth-body h2  { font-size:20px; font-weight:700; margin-bottom:4px; }
+.auth-subtitle { color:var(--muted); font-size:13px; margin-bottom:24px; }
+.auth-footer   { text-align:center; margin-top:20px; font-size:13px; color:var(--muted); }
+.auth-footer a { color:var(--primary); font-weight:600; }
+
+/* ── JOB CARDS ── */
+.job-card { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; border:1px solid var(--border); transition:transform .2s, box-shadow .2s; height:100%; display:flex; flex-direction:column; gap:12px; }
+.job-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg); }
+.job-card-header { display:flex; align-items:flex-start; gap:14px; }
+.job-icon { width:44px; height:44px; background:var(--primary-lt); color:var(--primary); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.job-title { font-size:15px; font-weight:700; margin-bottom:2px; }
+.job-desc  { color:var(--muted); font-size:13px; flex:1; }
+
+/* ── PROFILE ── */
+.profile-avatar-lg { width:72px; height:72px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800; margin:20px auto 0; }
+.profile-info-list { text-align:left; padding:16px; margin-top:8px; }
+.profile-info-item { display:flex; align-items:flex-start; gap:8px; font-size:13px; padding:6px 0; border-bottom:1px solid var(--border); color:var(--muted); }
+.profile-info-item:last-child { border-bottom:none; }
+.profile-info-item i { color:var(--primary); width:16px; margin-top:2px; flex-shrink:0; }
+
+.resume-preview { display:flex; align-items:center; background:#fff5f5; border:1px solid #fecaca; border-radius:10px; padding:12px 16px; }
+.info-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); display:block; margin-bottom:6px; }
+
+.table-avatar { width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0; }
+
+.border-left-primary { border-left:3px solid var(--primary); }
+.border-left-primary .card-panel-header { padding-left:17px; }
+
+/* ── REPORT CARDS ── */
+.report-card { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; text-align:center; }
+.report-icon { width:56px; height:56px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; margin:0 auto 16px; }
+.report-card h5 { font-size:16px; font-weight:700; margin-bottom:8px; }
+
+/* ── EMPTY STATES ── */
+.empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
+.empty-state i { font-size:48px; margin-bottom:16px; opacity:.4; display:block; }
+.empty-state h4 { font-size:18px; font-weight:600; color:var(--text); margin-bottom:8px; }
+.empty-mini { text-align:center; padding:24px 20px; color:var(--muted); }
+.empty-mini i { font-size:28px; display:block; margin-bottom:8px; opacity:.4; }
+.empty-mini p { font-size:13px; }
+
+/* ── BUTTONS ── */
+.btn-primary   { background:var(--primary); border-color:var(--primary); }
+.btn-primary:hover { background:var(--primary-dk); border-color:var(--primary-dk); }
+.btn-outline-indigo { color:#6366f1; border-color:#6366f1; }
+.btn-outline-indigo:hover { background:#6366f1; color:#fff; }
+
+/* ── FORM CONTROLS ── */
+.form-control, .form-select {
+  border-color: var(--border); border-radius:8px; font-size:13.5px;
+  padding:9px 12px; transition:border-color .2s, box-shadow .2s;
+}
+.form-control:focus, .form-select:focus {
+  border-color:var(--primary); box-shadow:0 0 0 3px rgba(79,70,229,.12);
+  outline:none;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width:768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-left:0; }
+  .page-content { padding: 16px; }
+  .stat-value { font-size:22px; }
+}

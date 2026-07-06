@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Candidates — ResumeAI{% endblock %}
+{% block page_title %}Candidates{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2 class="page-heading">All Candidates</h2>
+  <p class="page-sub">Search, filter, and review candidate profiles</p>
+</div>
+
+<!-- Filters -->
+<div class="card-panel mb-4">
+  <form method="get" class="row g-3 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label fw-semibold">Search</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-search"></i></span>
+        <input type="text" name="q" class="form-control" placeholder="Name or email..." value="{{ query }}">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label fw-semibold">Filter by Skill</label>
+      <input type="text" name="skill" class="form-control" placeholder="e.g. Python" value="{{ skill_filter }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label fw-semibold">Status</label>
+      <select name="status" class="form-select">
+        <option value="">All Statuses</option>
+        <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+        <option value="shortlisted" {% if status_filter == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
+        <option value="selected" {% if status_filter == 'selected' %}selected{% endif %}>Selected</option>
+        <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>Filter</button>
+    </div>
+  </form>
+</div>
+
+<div class="card-panel">
+  <table class="data-table">
+    <thead>
+      <tr><th>#</th><th>Candidate</th><th>Contact</th><th>AI Score</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for c in candidates %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>
+          <div class="d-flex align-items-center gap-2">
+            <div class="table-avatar">{{ c.full_name|first|upper }}</div>
+            <div>
+              <strong>{{ c.full_name }}</strong><br>
+              <small class="text-muted">Joined {{ c.created_at|date:"d M Y" }}</small>
+            </div>
+          </div>
+        </td>
+        <td>{{ c.email }}<br><small class="text-muted">{{ c.phone }}</small></td>
+        <td>
+          <div class="score-pill {% if c.score >= 70 %}score-high{% elif c.score >= 40 %}score-mid{% else %}score-low{% endif %}">
+            {{ c.score|floatformat:1 }}%
+          </div>
+        </td>
+        <td><span class="badge status-badge-{{ c.status }}">{{ c.get_status_display }}</span></td>
+        <td><a href="{% url 'hr_candidate_detail' c.id %}" class="btn btn-sm btn-primary"><i class="fas fa-eye me-1"></i>View</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center text-muted py-4">No candidates found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
